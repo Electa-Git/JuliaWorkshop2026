@@ -8,6 +8,9 @@
 \Crefname{equation}{}{}
 
 \begin{document}
+This file describes the system model that we'll be implementing during the workshop in it's most complete form.
+The starter model that will be used for the first part of the workshop is described in \cref{sec:starter}.
+
 A DC motor drives a mechanical load.
 The task is to follow some reference speed profile, while providing the required load torque.
 This load torque is regarded as an unknown, unmeasured disturbance.
@@ -95,4 +98,19 @@ We introduce the variable $c(t)$ which represents the state of the integrator in
   K_i \frac{c}{dt} &= (\omega_{ref}(t)-\omega)
 \end{align}
 \end{subequations}
+
+\section{Starter model}
+\label{sec:starter}
+To provide an accessible starting point, that is still reasonably readable in a badly written script, consider the following simplifications: Coulomb friction in the mechanical drive is neglected; the electrical drive is an open loop system using a constant voltage $u_a$ and $u_b$.
+The complete system ODE becomes \cref{eq:summary}.
+
+\begin{subequations}
+  \label{eq:summary}
+  \begin{align}
+    J\frac{d\omega}{dt} &= -B\omega - T_u(t) + k i_a i_b  \\
+    L_a\frac{di_a}{dt} &= u_a ki_b\omega - R_a i_a \\
+    L_b\frac{di_b}{dt} &= u_b - Ri_b
+  \end{align}
+\end{subequations}
+
 \end{document}
