@@ -1,0 +1,7 @@
+/docs/*.aux
+/docs/*.log
+/docs/*.pdf
+/docs/*.fdb_latexmk
+/docs/*.fls
+/docs/_region_.tex
+/docs/*.prv
