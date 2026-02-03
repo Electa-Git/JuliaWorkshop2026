@@ -82,11 +82,18 @@ d = Dict("omega" => ω_vec, "i_a" => i_a_vec, "i_b" => i_b_vec, "time" => time)
 
 println("Running took $(timestop - timestart)")
 
+println("Writing results")
 CSV.write(output_file, d)
 
-try
-    run(`python plot.py`)
-catch e
-    println(stderr, "Your system could not plot the result with the provided
-    script, but numerical results are available in result.csv")
-end
+println("Plotting results")
+using CairoMakie
+
+fig = Figure();
+ax = Axis(fig[1, 1], xlabel = "Time [s]")
+lines!(ax, time, ω_vec, label = "ω [rad/s]")
+lines!(ax, time, i_a_vec, label = "i_a [A]")
+lines!(ax, time, i_b_vec, label = "i_b [A]")
+axislegend(ax, position = :rt)
+save("plot.png", fig)
+
+println("Done")
