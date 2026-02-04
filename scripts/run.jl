@@ -39,48 +39,45 @@ T_u(t) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
 ### * Initialize
 
 # start of timing for benchmarking purposes
-timestart = Dates.now()
+@time begin
+    ω_vec = []
+    i_a_vec = []
+    i_b_vec = []
 
-ω_vec = []
-i_a_vec = []
-i_b_vec = []
+    push!(ω_vec, 0)
+    push!(i_a_vec, 0)
+    push!(i_b_vec, 0)
 
-push!(ω_vec, 0)
-push!(i_a_vec, 0)
-push!(i_b_vec, 0)
+    ### * Simulate
 
-### * Simulate
+    trange = range(start = tstart, stop = tend, step = tstep)
+    for t in trange
+        ω = last(ω_vec)
+        i_a = last(i_a_vec)
+        i_b = last(i_b_vec)
+        e = k * i_b * ω
+        Tm = k * i_a * i_b
 
-trange = range(start = tstart, stop = tend, step = tstep)
-for t in trange
-    ω = last(ω_vec)
-    i_a = last(i_a_vec)
-    i_b = last(i_b_vec)
-    e = k * i_b * ω
-    Tm = k * i_a * i_b
+        dω = (-B * ω - T_u(t) + Tm) / J
+        di_a = (U_a - e - R_a * i_a) / L_a
+        di_b = (U_b - R_b * i_b) / L_b
 
-    dω = (-B * ω - T_u(t) + Tm) / J
-    di_a = (U_a - e - R_a * i_a) / L_a
-    di_b = (U_b - R_b * i_b) / L_b
+        # Forward Euler x(t+dt) = x(t) + dt * dx/dt (t)
+        ω_new = ω + dω * tstep
+        i_a_new = i_a + di_a * tstep
+        i_b_new = i_b + di_b * tstep
 
-    # Forward Euler x(t+dt) = x(t) + dt * dx/dt (t)
-    ω_new = ω + dω * tstep
-    i_a_new = i_a + di_a * tstep
-    i_b_new = i_b + di_b * tstep
+        push!(ω_vec, ω_new)
+        push!(i_a_vec, i_a_new)
+        push!(i_b_vec, i_b_new)
+    end
 
-    push!(ω_vec, ω_new)
-    push!(i_a_vec, i_a_new)
-    push!(i_b_vec, i_b_new)
+    # stop time
 end
-
-# stop time
-timestop = Dates.now()
 
 ### * Save result
 time = range(tstart, step = tstep, length = length(ω_vec)) # avoid off-by-one errors
 d = Dict("omega" => ω_vec, "i_a" => i_a_vec, "i_b" => i_b_vec, "time" => time)
-
-println("Running took $(timestop - timestart)")
 
 println("Writing results")
 CSV.write(output_file, d)
