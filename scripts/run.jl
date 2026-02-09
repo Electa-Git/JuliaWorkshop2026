@@ -1,5 +1,6 @@
 import CSV
 import Dates
+using BenchmarkTools
 
 ### * Config
 output_file = "result.csv"
@@ -34,31 +35,28 @@ R_b = U_b / I_b_nom           # Ω
 ### ** Load
 J = 1.0                                         # kgm^2
 B = 1.0                                         # kgm^2/s
-T_u(t) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
+T_u(t, T_nom) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
 
 ### * Initialize
 
 # start of timing for benchmarking purposes
-@time begin
-    ω_vec = []
-    i_a_vec = []
-    i_b_vec = []
+function run_loop(; tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k, T_nom)
+    trange = range(start = tstart, stop = tend, step = tstep)
 
-    push!(ω_vec, 0)
-    push!(i_a_vec, 0)
-    push!(i_b_vec, 0)
+    ω_vec = zeros(length(trange))
+    i_a_vec = zeros(length(trange))
+    i_b_vec = zeros(length(trange))
 
     ### * Simulate
 
-    trange = range(start = tstart, stop = tend, step = tstep)
-    for t in trange
-        ω = last(ω_vec)
-        i_a = last(i_a_vec)
-        i_b = last(i_b_vec)
+    for (idx, t) in enumerate(trange[begin:(end - 1)])
+        ω = ω_vec[idx]
+        i_a = i_a_vec[idx]
+        i_b = i_b_vec[idx]
         e = k * i_b * ω
         Tm = k * i_a * i_b
 
-        dω = (-B * ω - T_u(t) + Tm) / J
+        dω = (-B * ω - T_u(t, T_nom) + Tm) / J
         di_a = (U_a - e - R_a * i_a) / L_a
         di_b = (U_b - R_b * i_b) / L_b
 
@@ -67,13 +65,15 @@ T_u(t) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
         i_a_new = i_a + di_a * tstep
         i_b_new = i_b + di_b * tstep
 
-        push!(ω_vec, ω_new)
-        push!(i_a_vec, i_a_new)
-        push!(i_b_vec, i_b_new)
+        ω_vec[idx + 1] = ω_new
+        i_a_vec[idx + 1] = i_a_new
+        i_b_vec[idx + 1] = i_b_new
     end
-
-    # stop time
+    return (ω_vec, i_a_vec, i_b_vec)
 end
+
+@benchmark run_loop(; tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k, T_nom)
+(ω_vec, i_a_vec, i_b_vec) = run_loop(; tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k, T_nom)
 
 ### * Save result
 time = range(tstart, step = tstep, length = length(ω_vec)) # avoid off-by-one errors
