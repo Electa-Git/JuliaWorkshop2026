@@ -40,7 +40,7 @@ T_u(t, T_nom) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
 ### * Initialize
 
 # start of timing for benchmarking purposes
-function run_loop(; tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k, T_nom)
+function run_loop(; tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k, T_nom, kwargs...)
     trange = range(start = tstart, stop = tend, step = tstep)
 
     ω_vec = zeros(length(trange))
