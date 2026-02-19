@@ -42,7 +42,7 @@ end
 ### * Instantiate model and simulate it
 motor = MyModel.IndependentDCMotor(; data[:motor]...)
 load = MyModel.DampedLoad(data[:load])
-powersource = MyModel.ConstantVoltagePowerSource(; data[:powersource]...)
+powersource = MyModel.read_power_source(data[:powersource])
 
 f = MyModel.build_simulate_function(motor, load, powersource)
 
@@ -61,7 +61,7 @@ println("Plotting results")
 using CairoMakie
 
 fig = Figure();
-ax = Axis(fig[1, 1], xlabel = "Time [s]")
+ax = Axis(fig[1, 1], xlabel = "Time [s]", yticks = 0:50:250)
 lines!(ax, time, ω_vec, label = "ω [rad/s]")
 lines!(ax, time, i_a_vec, label = "i_a [A]")
 lines!(ax, time, i_b_vec, label = "i_b [A]")

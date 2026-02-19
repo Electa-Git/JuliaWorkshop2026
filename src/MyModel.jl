@@ -127,6 +127,33 @@ function voltages(source::ConstantVoltagePowerSource, state, inputs, time)
 end
 
 """
+Add a proportional controller to regulate the angular velocity of the motor
+"""
+Base.@kwdef struct SpeedControlPowerSource{T}
+    ω_ref::T
+    K_p::T
+    U_a_bias::T
+    U_b::T
+end
+
+function voltages(source::SpeedControlPowerSource, state, inputs, time)
+    Δω = source.ω_ref - state[:ω]
+    U_a = source.U_a_bias + source.K_p * Δω
+    (; U_a, U_b = source.U_b)
+end
+
+"""
+read either a SpeedControlPowerSource or a voltage power source from the config file
+"""
+function read_power_source(data)
+    if haskey(data, :ω_ref)
+        SpeedControlPowerSource(; data...)
+    else
+        ConstantVoltagePowerSource(; data...)
+    end
+end
+
+"""
 Build a function to simulate from the high-level component structs
 """
 function build_simulate_function(motor, load, powersource)
