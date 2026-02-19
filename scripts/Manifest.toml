@@ -2,7 +2,7 @@
 
 julia_version = "1.12.5"
 manifest_format = "2.0"
-project_hash = "0023781431f8e12c9cd668313839bf197fbc4520"
+project_hash = "8660b953aca817db8d490f50c43fd77b37daf386"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -951,6 +951,11 @@ version = "2025.11.4"
 git-tree-sha1 = "cac9cc5499c25554cba55cd3c30543cff5ca4fab"
 uuid = "46d2c3a1-f734-5fdb-9937-b9b9aeba4221"
 version = "0.2.4"
+
+[[deps.MyModel]]
+path = ".."
+uuid = "28c15d33-2609-47db-bc12-f86c87e3f2a0"
+version = "0.1.0"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]

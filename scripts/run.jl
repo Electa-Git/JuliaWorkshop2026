@@ -3,6 +3,7 @@ import Dates
 using BenchmarkTools
 import YAML
 import ArgParse
+import MyModel
 
 ### * Parse arguments
 function parse_cmd()
@@ -38,104 +39,16 @@ end
 ## ** Time
 (; tstart, tend, tstep) = (; data[:time]...)
 
-### *** Calculate machine constant from nominal characteristics
-let d = data[:motor]
-    (; U_b, n_nom, Pme, I_a_nom, I_b_nom) = (; d...)
-    ω_nom = n_nom * 2 * pi / 60   # rad/s
-    T_nom = Pme / ω_nom           # Nm
-    k = T_nom / I_a_nom / I_b_nom # Nm/A^2
-    R_b = U_b / I_b_nom           # Ω
-    d[:ω_nom] = ω_nom
-    d[:T_nom] = T_nom
-    d[:k] = k
-    d[:R_b] = R_b
-end
+### * Instantiate model and simulate it
+motor = MyModel.IndependentDCMotor(; data[:motor]...)
+load = MyModel.DampedLoad(data[:load])
+powersource = MyModel.ConstantVoltagePowerSource(; data[:powersource]...)
 
-### ** Load
-T_u(t, T_nom) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
+f = MyModel.build_simulate_function(motor, load, powersource)
 
-### * Initialize
+display(@benchmark MyModel.simulate(f, tstart, tend, tstep))
 
-# start of timing for benchmarking purposes
-function run_loop(; tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k, T_nom, kwargs...)
-    trange = range(start = tstart, stop = tend, step = tstep)
-
-    ω_vec = zeros(length(trange))
-    i_a_vec = zeros(length(trange))
-    i_b_vec = zeros(length(trange))
-
-    ### * Simulate
-
-    for (idx, t) in enumerate(trange[begin:(end - 1)])
-        ω = ω_vec[idx]
-        i_a = i_a_vec[idx]
-        i_b = i_b_vec[idx]
-        e = k * i_b * ω
-        Tm = k * i_a * i_b
-
-        dω = (-B * ω - T_u(t, T_nom) + Tm) / J
-        di_a = (U_a - e - R_a * i_a) / L_a
-        di_b = (U_b - R_b * i_b) / L_b
-
-        # Forward Euler x(t+dt) = x(t) + dt * dx/dt (t)
-        ω_new = ω + dω * tstep
-        i_a_new = i_a + di_a * tstep
-        i_b_new = i_b + di_b * tstep
-
-        ω_vec[idx + 1] = ω_new
-        i_a_vec[idx + 1] = i_a_new
-        i_b_vec[idx + 1] = i_b_new
-    end
-    return (ω_vec, i_a_vec, i_b_vec)
-end
-
-function run_loop_from_dict(d)
-    (; tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k, T_nom) = (; d...)
-
-    trange = range(start = tstart, stop = tend, step = tstep)
-
-    ω_vec = zeros(length(trange))
-    i_a_vec = zeros(length(trange))
-    i_b_vec = zeros(length(trange))
-
-    ### * Simulate
-
-    for (idx, t) in enumerate(trange[begin:(end - 1)])
-        ω = ω_vec[idx]
-        i_a = i_a_vec[idx]
-        i_b = i_b_vec[idx]
-        e = k * i_b * ω
-        Tm = k * i_a * i_b
-
-        dω = (-B * ω - T_u(t, T_nom) + Tm) / J
-        di_a = (U_a - e - R_a * i_a) / L_a
-        di_b = (U_b - R_b * i_b) / L_b
-
-        # Forward Euler x(t+dt) = x(t) + dt * dx/dt (t)
-        ω_new = ω + dω * tstep
-        i_a_new = i_a + di_a * tstep
-        i_b_new = i_b + di_b * tstep
-
-        ω_vec[idx + 1] = ω_new
-        i_a_vec[idx + 1] = i_a_new
-        i_b_vec[idx + 1] = i_b_new
-    end
-    return (ω_vec, i_a_vec, i_b_vec)
-end
-
-flat_data = reduce(merge, values(data))
-
-# Pay attention to typing
-println("pass data as keyword arguments")
-display(@benchmark run_loop(; flat_data...))
-
-println("\npass data as Dict{Symbol, Any}")
-display(@benchmark run_loop_from_dict(flat_data))
-
-println("\npass data as a a NamedTuple")
-display(@benchmark run_loop_from_dict((; flat_data...)))
-
-(ω_vec, i_a_vec, i_b_vec) = run_loop(; flat_data...)
+(ω_vec, i_a_vec, i_b_vec) = MyModel.simulate(f, tstart, tend, tstep)
 
 ### * Save result
 time = range(tstart, step = tstep, length = length(ω_vec)) # avoid off-by-one errors

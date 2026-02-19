@@ -6,8 +6,7 @@ time:
 
 motor:
   Pme: 18.9e3
-  U_a: 470
-  U_b: 170
+  U_b_nom: 170
   I_a_nom: 49
   I_b_nom: 4.9
   n_nom: 1285
@@ -15,6 +14,14 @@ motor:
   L_a: 1.0e-1
   L_b: 1.0e-1
 
+powersource:
+  U_a: 470
+  U_b: 170
+
 load:
   J: 1.0
   B: 1.0
+  inner_type: "SinusoidalLoadProfile"
+  inner_kwargs:
+    amplitude: 0.25
+    offset: 0.5
