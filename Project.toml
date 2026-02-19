@@ -1,0 +1,4 @@
+name = "MyModel"
+uuid = "28c15d33-2609-47db-bc12-f86c87e3f2a0"
+version = "0.1.0"
+authors = ["Cas Bex <cas.bex@kuleuven.be>"]
