@@ -7,19 +7,19 @@ excitation voltages.
 # Parameters
 some more information...
 """
-struct IndependentDCMotor
-    Pme
-    U_b_nom
-    I_a_nom
-    I_b_nom
-    n_nom
-    R_a
-    L_a
-    L_b
-    ω_nom
-    T_nom
-    k
-    R_b
+struct IndependentDCMotor{T}
+    Pme::T
+    U_b_nom::T
+    I_a_nom::T
+    I_b_nom::T
+    n_nom::T
+    R_a::T
+    L_a::T
+    L_b::T
+    ω_nom::T
+    T_nom::T
+    k::T
+    R_b::T
 end
 
 function IndependentDCMotor(;
@@ -74,13 +74,13 @@ Model of the studied sinusoidal load: ``offset + amplitude * sin(2 * pi * T)``
 # Parameters
 ...
 """
-Base.@kwdef struct SinusoidalLoadProfile
-    offset
-    amplitude
+Base.@kwdef struct SinusoidalLoadProfile{T}
+    offset::T
+    amplitude::T
 end
 
-function torque(load::SinusoidalLoadProfile, state, inputs, time)
-    -(load.offset + load.amplitude * sin(2 * pi * time))
+function torque(load::SinusoidalLoadProfile{T}, state, inputs, time) where {T}
+    -(load.offset + load.amplitude * sin(2 * T(pi) * time))
 end
 
 """
@@ -89,10 +89,10 @@ Add some damper to another load profile
 # Parameters
 ...
 """
-Base.@kwdef struct DampedLoad
-    inner
-    B
-    J
+Base.@kwdef struct DampedLoad{I, T}
+    inner::I
+    B::T
+    J::T
 end
 
 DampedLoad(d::Dict{Symbol}) = DampedLoad(d[:B], d[:J], d[:inner_type], d[:inner_kwargs])
@@ -117,9 +117,9 @@ end
 """
 Power source model with constant voltage
 """
-Base.@kwdef struct ConstantVoltagePowerSource
-    U_a
-    U_b
+Base.@kwdef struct ConstantVoltagePowerSource{T}
+    U_a::T
+    U_b::T
 end
 
 function voltages(source::ConstantVoltagePowerSource, state, inputs, time)
