@@ -36,11 +36,11 @@ catch err
 end
 
 ## ** Time
-tstart, tend, tstep = (; data[:time]...)
+(; tstart, tend, tstep) = (; data[:time]...)
 
 ### *** Calculate machine constant from nominal characteristics
 let d = data[:motor]
-    U_b, n_nom, Pme, I_a_nom, I_b_nom = (; d...)
+    (; U_b, n_nom, Pme, I_a_nom, I_b_nom) = (; d...)
     ω_nom = n_nom * 2 * pi / 60   # rad/s
     T_nom = Pme / ω_nom           # Nm
     k = T_nom / I_a_nom / I_b_nom # Nm/A^2
