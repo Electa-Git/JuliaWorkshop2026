@@ -5,7 +5,7 @@ import YAML
 import ArgParse
 
 ### * Parse arguments
-function parse_args()
+function parse_cmd()
     s = ArgParse.ArgParseSettings()
     ArgParse.@add_arg_table s begin
         "--output", "-o"
@@ -19,12 +19,12 @@ function parse_args()
     if isinteractive()
         Dict("output" => "result.csv", "system" => "system.yaml")
     else
-        s
+        ArgParse.parse_args(s)
     end
 end
 
 ### * Config
-args = parse_args()
+args = parse_cmd()
 output_file = args["output"]
 config_file = args["system"]
 data = try
