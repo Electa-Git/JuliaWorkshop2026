@@ -23,5 +23,5 @@ load:
   B: 1.0
   inner_type: "SinusoidalLoadProfile"
   inner_kwargs:
-    amplitude: 0.25
-    offset: 0.5
+    amplitude: 35.11317226969053
+    offset: 70.22634453938106
