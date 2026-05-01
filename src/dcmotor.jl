@@ -1,4 +1,7 @@
 module DCMotor
+
+import ..Serialisation as SR
+
 export Anchor,
     ExcitationWinding,
     Series,
@@ -75,4 +78,29 @@ function derivative(motor::DCMotorWithWinding{<:Parallel}, u_a, u_b, i_a, i_b, Ï
     di_b = derivative(motor.excitation.winding, u_a, i_b)
     (; di_a, di_b)
 end
+
+function SR.deserialise(cfg, ::Type{<:DCMotorWithWinding}, context)
+    d = cfg
+    (; U_b, n_nom, Pme, I_a_nom, I_b_nom) = (; d...)
+    R_b = U_b / I_b_nom
+
+    # use elsewhere
+    context[:T_nom] = Pme / (n_nom * 2Ï€ / 60)
+
+    # deserialise the motor
+    anchor = Anchor(; R = d[:R_a], L = d[:L_a], I_a_nom, I_b_nom, Pme, n_nom)
+    winding = ExcitationWinding(R_b, d[:L_b])
+    setupkey = get(d, :setup, "independent")
+    excitation = if setupkey == "independent"
+        Independent(winding)
+    elseif setupkey == "parallel"
+        Parallel(winding)
+    elseif setupkey == "series"
+        Series(winding)
+    else
+        throw(KeyError(setupkey))
+    end
+    DCMotorWithWinding(anchor, excitation)
+end
+
 end

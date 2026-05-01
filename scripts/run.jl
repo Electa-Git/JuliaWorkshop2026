@@ -4,8 +4,9 @@ using BenchmarkTools
 import YAML
 import ArgParse
 import Revise
-Revise.includet("../src/dcmotor.jl")
-using .DCMotor
+Revise.includet("../src/MyModel.jl")
+using .MyModel.DCMotor
+import .MyModel.Serialisation: deserialise
 
 ### * Parse arguments
 function parse_cmd()
@@ -50,26 +51,8 @@ end
 (; tstart, tend, tstep) = (; data[:time]...)
 
 ### *** Calculate machine constant from nominal characteristics
-let d = data[:motor]
-    (; U_b, n_nom, Pme, I_a_nom, I_b_nom) = (; d...)
-    ω_nom = n_nom * 2 * pi / 60   # rad/s
-    T_nom = Pme / ω_nom           # Nm
-    R_b = U_b / I_b_nom           # Ω
-    d[:T_nom] = T_nom
-    anchor = Anchor(; R = d[:R_a], L = d[:L_a], I_a_nom, I_b_nom, Pme, n_nom)
-    winding = ExcitationWinding(R_b, d[:L_b])
-    setupkey = get(d, :setup, "independent")
-    excitation = if setupkey == "independent"
-        Independent(winding)
-    elseif setupkey == "parallel"
-        Parallel(winding)
-    elseif setupkey == "series"
-        Series(winding)
-    else
-        throw(KeyError(setupkey))
-    end
-    d[:motor] = DCMotorWithWinding(anchor, excitation)
-end
+ctx = Dict{Symbol, Any}()
+motor = deserialise(data[:motor], DCMotorWithWinding, ctx)
 
 ### ** Load
 T_u(t, T_nom) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
@@ -110,10 +93,10 @@ flat_data = reduce(merge, values(data))
 
 if args["benchmark"]
     println("pass data as keyword arguments")
-    display(@benchmark run_loop(; flat_data...))
+    display(@benchmark run_loop(; flat_data..., ctx..., motor))
 end
 
-(ω_vec, i_a_vec, i_b_vec) = run_loop(; flat_data...)
+(ω_vec, i_a_vec, i_b_vec) = run_loop(; flat_data..., ctx..., motor)
 
 ### * Save result
 time = range(tstart, step = tstep, length = length(ω_vec)) # avoid off-by-one errors
