@@ -1,6 +1,5 @@
 module Serialisation
 
-function deserialise(cfg, target, context)
-end
+function deserialise end
 
 end

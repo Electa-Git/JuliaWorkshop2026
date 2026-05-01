@@ -81,8 +81,8 @@ end
 
 function SR.deserialise(cfg, ::Type{<:DCMotorWithWinding}, context)
     d = cfg
-    (; U_b, n_nom, Pme, I_a_nom, I_b_nom) = (; d...)
-    R_b = U_b / I_b_nom
+    (; U_b_nom, n_nom, Pme, I_a_nom, I_b_nom) = (; d...)
+    R_b = U_b_nom / I_b_nom
 
     # use elsewhere
     context[:T_nom] = Pme / (n_nom * 2π / 60)
