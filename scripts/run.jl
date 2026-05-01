@@ -17,6 +17,12 @@ function parse_cmd()
         help = "output file"
         arg_type = String
         default = "result.csv"
+        "--no-plot", "-n"
+        action = :store_true
+        "--plot-output", "-p"
+        help = "plot output file"
+        arg_type = String
+        default = "plot.png"
         "system"
         help = "system config file"
         required = true
@@ -116,15 +122,17 @@ d = Dict("omega" => ω_vec, "i_a" => i_a_vec, "i_b" => i_b_vec, "time" => time)
 println("Writing results")
 CSV.write(output_file, d)
 
-println("Plotting results")
-using CairoMakie
+if !args["no-plot"]
+    println("Plotting results")
+    using CairoMakie
 
-fig = Figure();
-ax = Axis(fig[1, 1], xlabel = "Time [s]")
-lines!(ax, time, ω_vec, label = "ω [rad/s]")
-lines!(ax, time, i_a_vec, label = "i_a [A]")
-lines!(ax, time, i_b_vec, label = "i_b [A]")
-axislegend(ax, position = :rt)
-save("plot.png", fig)
+    fig = Figure()
+    ax = Axis(fig[1, 1], xlabel = "Time [s]")
+    lines!(ax, time, ω_vec, label = "ω [rad/s]")
+    lines!(ax, time, i_a_vec, label = "i_a [A]")
+    lines!(ax, time, i_b_vec, label = "i_b [A]")
+    axislegend(ax, position = :rt)
+    save(args["plot-output"], fig)
 
-println("Done")
+    println("Done")
+end
