@@ -39,7 +39,7 @@ T_u(t,T_nom) = T_nom * (0.5 + 0.25 * sin(2 * pi * t)) # Nm
 
 ### * Initialize
 
-
+# start of timing for benchmarking purposes
 function run_loop(tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k,T_nom)
     trange = range(start = tstart, stop = tend, step = tstep)
 
@@ -83,26 +83,26 @@ function run_loop(tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k,T_n
     end
     return ω_vec, i_a_vec, i_b_vec
 end
+println("Benchmarking $(@__FILE__)")
+@benchmark run_loop(tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k,T_nom)
+# @time (ω_vec, i_a_vec, i_b_vec) = run_loop( tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k,T_nom)
 
-(ω_vec, i_a_vec, i_b_vec) = run_loop( tstart, tend, tstep, U_a, U_b, B, J, L_a, L_b, R_a, R_b, k,T_nom)
+# ### * Save result
+# time = range(tstart, step = tstep, length = length(ω_vec)) # avoid off-by-one errors
+# d = Dict("omega" => ω_vec, "i_a" => i_a_vec, "i_b" => i_b_vec, "time" => time)
 
-### * Save result
-time = range(tstart, step = tstep, length = length(ω_vec)) # avoid off-by-one errors
-d = Dict("omega" => ω_vec, "i_a" => i_a_vec, "i_b" => i_b_vec, "time" => time)
+# println("Writing results")
+# CSV.write(output_file, d)
 
-println("Writing results")
-CSV.write(output_file, d)
+# println("Plotting results")
+# using CairoMakie
 
-println("Plotting results")
-using CairoMakie
+# fig = Figure();
+# ax = Axis(fig[1, 1], xlabel = "Time [s]")
+# lines!(ax, time, ω_vec, label = "ω [rad/s]")
+# lines!(ax, time, i_a_vec, label = "i_a [A]")
+# lines!(ax, time, i_b_vec, label = "i_b [A]")
+# axislegend(ax, position = :rt)
+# save("plot.png", fig)
 
-fig = Figure();
-ax = Axis(fig[1, 1], xlabel = "Time [s]")
-lines!(ax, time, ω_vec, label = "ω [rad/s]")
-lines!(ax, time, i_a_vec, label = "i_a [A]")
-lines!(ax, time, i_b_vec, label = "i_b [A]")
-axislegend(ax, position = :rt)
-save("plot.png", fig)
-
-println("Done")
-
+# println("Done")
