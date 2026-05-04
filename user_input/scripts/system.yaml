@@ -1,0 +1,20 @@
+
+time:
+  tstart: 0.0
+  tend: 5.0
+  tstep: 0.0001
+
+motor:
+  Pme: 18.9e3
+  U_a: 470
+  U_b: 170
+  I_a_nom: 49
+  I_b_nom: 4.9
+  n_nom: 1285
+  R_a: 1.46
+  L_a: 1.0e-1
+  L_b: 1.0e-1
+
+load:
+  J: 1.0
+  B: 1.0
