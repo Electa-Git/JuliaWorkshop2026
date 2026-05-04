@@ -1,0 +1,29 @@
+
+time:
+  tstart: 0.0
+  tend: 5.0
+  tstep: 0.0001
+
+motor:
+  Pme: 18.9e3
+  U_b_nom: 170.0
+  I_a_nom: 49.0
+  I_b_nom: 4.9
+  n_nom: 1285.0
+  R_a: 1.46
+  L_a: 1.0e-1
+  L_b: 1.0e-1
+  setup: "parallel"
+
+powersource:
+  type: "constant"
+  U_a: 470
+  U_b: 170
+
+load:
+  J: 1.0
+  B: 1.0
+  profile:
+    type: "sinusoidal"
+    amplitude: 35.11317226969053
+    offset: 70.22634453938106
