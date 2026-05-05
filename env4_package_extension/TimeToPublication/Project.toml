@@ -1,0 +1,17 @@
+name = "TimeToPublication"
+uuid = "0dc3f55a-b526-4b8a-a73c-969dc38aea7b"
+version = "0.1.0"
+authors = ["Matteo Rossini <matteo.rossini@kuleuven.be>"]
+
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+
+[compat]
+Distributions = "0.25.125"
+UnicodePlots = "3.8.3"
+
+[weakdeps]
+UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
+
+[extensions]
+UnicodePlotsExt = "UnicodePlots"
