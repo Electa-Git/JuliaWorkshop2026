@@ -3,8 +3,13 @@ import Dates
 using BenchmarkTools
 import YAML
 import ArgParse
-import Revise
-Revise.includet("../src/dcmotor.jl")
+try
+    import Revise
+    Revise.includet("../src/dcmotor.jl")
+catch e
+    e isa ArgumentError || rethrow(e)
+    include("../src/dcmotor.jl")
+end
 using .DCMotor
 
 ### * Parse arguments
