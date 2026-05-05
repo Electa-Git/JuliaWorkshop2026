@@ -3,8 +3,13 @@ import Dates
 using BenchmarkTools
 import YAML
 import ArgParse
-import Revise
-Revise.includet("../src/MyModel.jl")
+try
+    import Revise
+    Revise.includet("../src/MyModel.jl")
+catch e
+    e isa ArgumentError || rethrow(e)
+    include("../src/MyModel.jl")
+end
 using .MyModel.DCMotor
 import .MyModel.Serialisation: deserialise
 
