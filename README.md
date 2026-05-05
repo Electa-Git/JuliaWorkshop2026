@@ -76,18 +76,3 @@ To run the main simulation script of any example, navigate to the script folder 
 julia --project run.jl
 ```
 Note: for some examples you will need to specify extra command line arguments to get useful results.
-
-### [Optional] Using Git
-All subfolders on the main branch are also available as branches in this repository, if you prefer to work with git.
-For example, to run the baseline script you could do (starting from the repository root):
-```
-git checkout baseline
-cd scripts
-julia --project run.jl
-```
-
-This is fully equivalent to checking out the main branch and running:
-```
-cd baseline/scripts
-julia --project run.jl
-```
