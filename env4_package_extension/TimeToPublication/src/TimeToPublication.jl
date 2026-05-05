@@ -11,6 +11,6 @@ struct Paper
 end
 sample(paper::Paper) = rand(paper.writing_days) + rand(paper.review_days)
 simulate(paper::Paper, trials::Int) = [sample(paper) for _ in 1:trials]
-display_result(result::Vector{Float64}) = println("Expected time to publication: $(sum(result)/length(result)) days")
+display_result(result) = println("Expected time to publication: $(sum(result)/length(result)) days")
 
 end # module TimeToPublication
