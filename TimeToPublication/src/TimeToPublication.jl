@@ -2,7 +2,7 @@ module TimeToPublication
 
 import Distributions
 
-export Paper, simulate
+export Paper, simulate, display_result
 
 struct Paper
     writing_days::Distributions.Erlang{Int}
@@ -11,5 +11,6 @@ struct Paper
 end
 sample(paper::Paper) = rand(paper.writing_days) + rand(paper.review_days)
 simulate(paper::Paper, trials::Int) = [sample(paper) for _ in 1:trials]
+display_result(result) = println("Expected time to publication: $(sum(result)/length(result)) days")
 
 end # module TimeToPublication

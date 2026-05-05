@@ -8,3 +8,10 @@ Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 
 [compat]
 Distributions = "0.25.125"
+UnicodePlots = "3.8.3"
+
+[weakdeps]
+UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
+
+[extensions]
+UnicodePlotsExt = "UnicodePlots"
