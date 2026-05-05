@@ -1,4 +1,4 @@
-import UnicodePlots
+# import UnicodePlots
 import TimeToPublication
 
 mypaper = TimeToPublication.Paper(60, 90)

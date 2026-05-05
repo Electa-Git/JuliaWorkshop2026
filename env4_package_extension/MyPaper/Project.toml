@@ -1,3 +1,5 @@
 [deps]
 TimeToPublication = "0dc3f55a-b526-4b8a-a73c-969dc38aea7b"
-UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
+
+[sources]
+TimeToPublication = {path = "../TimeToPublication"}
