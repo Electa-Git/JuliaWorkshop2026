@@ -18,7 +18,7 @@ julia --version
 
 If this is your first time installing Julia, it is a good idea to initialise the registry by running
 ```
-julia -e 'using Pkg; Pkg.instantiate()'
+julia -e "using Pkg; Pkg.instantiate()"
 ```
 
 ### Download this repository
@@ -48,7 +48,7 @@ git pull
 From the repository root run:
 ```
 cd baseline/scripts
-julia --project -e 'using Pkg; Pkg.resolve(); Pkg.instantiate()'
+julia --project -e "using Pkg; Pkg.resolve(); Pkg.instantiate()"
 julia --project run.jl
 ```
 This will install dependencies on your computer and run the baseline example. 
