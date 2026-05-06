@@ -1,6 +1,8 @@
 # Writing Clean and Fast Code in Julia - Workshop 2026
 Material for the Julia workshop organised by Lucas Bex, Matteo Rossini, and Jeroen Tant for the IEEE SB Leuven PES Chapter.
 
+[Presentation (PDF)](Julia_workshop_presentation.pdf)
+
 We do not assume any familiarity with git whatsoever. 
 If you have not used git before, please follow the manual installation instructions and disregard any git-related sections of this README.
 
